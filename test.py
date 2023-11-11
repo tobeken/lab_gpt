@@ -25,14 +25,14 @@ conversation = ConversationChain(
     prompt=PROMPT,
     llm=llm,
     verbose=True,
-    memory=ConversationBufferMemory(human_prefix="Friend"),
+    memory=ConversationBufferMemory(human_prefix="Researcher"),
 )
 
 
 EXIT_PHRASE = 'さようなら'
-exit_flag = False
+flag = True
 
-while True:
+while flag:
     #input audio
     r = sr.Recognizer()
     with sr.Microphone(sample_rate=16000) as source:
@@ -47,10 +47,12 @@ while True:
     file=audio_data, 
     response_format="text"
     )
+    print(f"You:{transcript}")
+    
+    if EXIT_PHRASE in transcript.lower().strip():
+        flag = False
     
     user_message = transcript
-
-    print(f"You:{transcript}")
     ai_message = conversation.run(input=user_message)
 
     response = openai.audio.speech.create(
